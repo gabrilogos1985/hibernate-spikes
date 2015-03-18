@@ -3,26 +3,30 @@ package model;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:app-context.xml")
+@ContextConfiguration(classes = ContainerElementSaveTest.HibernateMappingConfiguration.class,
+        loader = AnnotationConfigContextLoader.class)
+//@ContextConfiguration("classpath:app-context.xml")
 @Transactional
 public class ContainerElementSaveTest {
     @Autowired
@@ -124,18 +128,18 @@ public class ContainerElementSaveTest {
     }
 
     private <T extends Identifier> T saveObject(T container) {
-        sessionFactory.getCurrentSession().saveOrUpdate(container);
+        //   sessionFactory.getCurrentSession().saveOrUpdate(container);
         flushAndClearSession();
         container = getEntityWithCriteria(container);
 
         System.out.println(container);
-        sessionFactory.getCurrentSession().clear();
+        // sessionFactory.getCurrentSession().clear();
         return container;
     }
 
     public void flushAndClearSession() {
-        sessionFactory.getCurrentSession().flush();
-        sessionFactory.getCurrentSession().clear();
+        // sessionFactory.getCurrentSession().flush();
+        //sessionFactory.getCurrentSession().clear();
     }
 
     private <T extends Identifier> T getEntityWithCriteria(T container) {
@@ -146,19 +150,32 @@ public class ContainerElementSaveTest {
         } else {
             add.setFetchMode("elementos", FetchMode.JOIN);
             container = (T) add.uniqueResult();
-            sessionFactory.getCurrentSession().clear();
+            //  sessionFactory.getCurrentSession().clear();
         }
         return container;
     }
 
     private Criteria getCriteria(Identifier container) {
-        return sessionFactory.getCurrentSession()
-                .createCriteria(container.getClass())
-                .add(Restrictions.eq("id", container.getId()));
+        //return sessionFactory.getCurrentSession()
+        //      .createCriteria(container.getClass())
+        //    .add(Restrictions.eq("id", container.getId()));
+        return null;
     }
 
     private <T> T getEntity(T container, Serializable id) {
-        return (T) sessionFactory.getCurrentSession().get(
-                container.getClass(), id);
+        //return (T) sessionFactory.getCurrentSession().get(
+        //      container.getClass(), id);
+        return null;
+    }
+
+    @Configuration
+    @ImportResource("classpath:app-context.xml")
+    public static class HibernateMappingConfiguration {
+
+        @Bean
+        @Qualifier("mappings")
+        public List getListMappings() {
+            return Arrays.asList("model/Container.hbm.xml", "model/Elemento.hbm.xml");
+        }
     }
 }

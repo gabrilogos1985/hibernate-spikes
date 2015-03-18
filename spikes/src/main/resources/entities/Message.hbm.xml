@@ -1,0 +1,11 @@
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="gps.data.hibernate.entities.Message" table="MESSAGE">
+        <id name="idMessage" type="java.lang.Long">
+            <column name="idMessage"/>
+            <generator class="native"/>
+        </id>
+        <property name="message" type="java.lang.String" column="message"/>
+    </class>
+</hibernate-mapping>
